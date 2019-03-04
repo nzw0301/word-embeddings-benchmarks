@@ -13,8 +13,6 @@ from itertools import product
 logger = logging.getLogger(__name__)
 import sklearn
 from .datasets.analogy import *
-from .utils import batched
-from web.embedding import Embedding
 
 class SimpleAnalogySolver(sklearn.base.BaseEstimator):
     """
@@ -94,9 +92,10 @@ class SimpleAnalogySolver(sklearn.base.BaseEstimator):
         if missing_words > 0:
             logger.warning("Missing {} words. Will replace them with mean vector".format(missing_words))
 
-        # Batch due to memory constaints (in dot operation)
-        for id_batch, batch in enumerate(batched(range(len(X)), self.batch_size)):
-            ids = list(batch)
+        # Batch due to memory constraints (in dot operation)
+        for id_batch, start_batch_index in enumerate(range(0, len(X), self.batch_size)):
+            end_batch_index = min(start_batch_index+self.batch_size, len(X))
+            ids = list(range(start_batch_index, end_batch_index))
             X_b = X[ids]
             if id_batch % np.floor(len(X) / (10. * self.batch_size)) == 0:
                 logger.info("Processing {}/{} batch".format(int(np.ceil(ids[1] / float(self.batch_size))),
