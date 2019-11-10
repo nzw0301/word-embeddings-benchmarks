@@ -99,9 +99,9 @@ class SimpleAnalogySolver(sklearn.base.BaseEstimator):
                 logger.info("Processing {}/{} batch".format(int(np.ceil(ids[1] / float(self.batch_size))),
                                                             int(np.ceil(X.shape[0] / float(self.batch_size)))))
 
-            A, B, C = np.vstack([w.get(word, mean_vector) for word in X_b[:, 0]]), \
-                      np.vstack([w.get(word, mean_vector) for word in X_b[:, 1]]), \
-                      np.vstack([w.get(word, mean_vector) for word in X_b[:, 2]])
+            A = np.vstack([w.get(word, mean_vector) for word in X_b[:, 0]])
+            B = np.vstack([w.get(word, mean_vector) for word in X_b[:, 1]])
+            C = np.vstack([w.get(word, mean_vector) for word in X_b[:, 2]])
 
             if self.method == "add":
                 X = (B - A + C)
