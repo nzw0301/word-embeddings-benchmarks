@@ -3,16 +3,13 @@
 """
 
 import logging
-from collections import OrderedDict
-import six
+
+import numpy as np
+import sklearn
 from six.moves import range
-import scipy
-import pandas as pd
-from itertools import product
 
 logger = logging.getLogger(__name__)
-import sklearn
-from .datasets.analogy import *
+
 
 class SimpleAnalogySolver(sklearn.base.BaseEstimator):
     """
@@ -94,7 +91,7 @@ class SimpleAnalogySolver(sklearn.base.BaseEstimator):
 
         # Batch due to memory constraints (in dot operation)
         for id_batch, start_batch_index in enumerate(range(0, len(X), self.batch_size)):
-            end_batch_index = min(start_batch_index+self.batch_size, len(X))
+            end_batch_index = min(start_batch_index + self.batch_size, len(X))
             ids = list(range(start_batch_index, end_batch_index))
             X_b = X[ids]
             if id_batch % np.floor(len(X) / (10. * self.batch_size)) == 0:
@@ -106,7 +103,12 @@ class SimpleAnalogySolver(sklearn.base.BaseEstimator):
                       np.vstack(w.get(word, mean_vector) for word in X_b[:, 2])
 
             if self.method == "add":
-                D = np.dot(w.vectors, (B - A + C).T)
+                A = (A.T / np.linalg.norm(A, ord=2, axis=1)).T
+                B = (B.T / np.linalg.norm(B, ord=2, axis=1)).T
+                C = (C.T / np.linalg.norm(C, ord=2, axis=1)).T
+                X = (B - A + C)
+                X = (X.T / np.linalg.norm(X, ord=2, axis=1))
+                D = np.dot(w.normalize_words(), X)
             elif self.method == "mul":
                 D_A = np.log((1.0 + np.dot(w.vectors, A.T)) / 2.0 + 1e-5)
                 D_B = np.log((1.0 + np.dot(w.vectors, B.T)) / 2.0 + 1e-5)
