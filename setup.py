@@ -9,12 +9,12 @@ Word Embeddings Benchmarks
 
 from __future__ import print_function
 
-import os.path as op
 import io
+import os.path as op
 import sys
 
-from   setuptools import setup, find_packages
-from   setuptools.command.test import test as TestCommand
+from setuptools import setup, find_packages
+from setuptools.command.test import test as TestCommand
 
 
 # long description
@@ -32,7 +32,7 @@ def read(*filenames, **kwargs):
 MODULE_NAME = find_packages(exclude=['tests'])[0]
 VERSION_PYFILE = op.join(MODULE_NAME, 'version.py')
 # set __version__ variable
-exec (compile(read(VERSION_PYFILE), VERSION_PYFILE, 'exec'))
+exec(compile(read(VERSION_PYFILE), VERSION_PYFILE, 'exec'))
 
 # INSTALL_REQUIRES = list(parse_requirements('requirements.txt'))
 # req_files = ['requirements.txt', 'pip_requirements.txt']
@@ -89,7 +89,6 @@ setup_dict = dict(
         'testing': ['pytest', 'pytest-cov'],
     }
 )
-
 
 # Python3 support keywords
 if sys.version_info >= (3,):

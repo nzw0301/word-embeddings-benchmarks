@@ -6,22 +6,20 @@ NOTE: This file was adapted from the polyglot package
 
 import logging
 from collections import OrderedDict
+from functools import partial
 
 import numpy as np
-import sys
-
-from six import text_type
 from six import PY2
 from six import iteritems
 from six import string_types
-from .utils import _open
-from .vocabulary import Vocabulary, CountedVocabulary, OrderedVocabulary
+from six import text_type
 from six.moves import cPickle as pickle
 from six.moves import range
-from functools import partial
-from .utils import standardize_string, to_utf8
-
 from sklearn.metrics import pairwise_distances
+
+from .utils import _open
+from .utils import standardize_string, to_utf8
+from .vocabulary import Vocabulary, CountedVocabulary, OrderedVocabulary
 
 logger = logging.getLogger(__name__)
 

@@ -5,6 +5,7 @@
 """
 
 from sklearn.datasets.base import Bunch
+
 from .utils import _get_cluster_assignments
 
 
@@ -119,7 +120,6 @@ def fetch_battig():
                                     sep=",", skip_header=True)
     return Bunch(X=data.X[:, 0], y=data.y,
                  freq=data.X[:, 1], frequency=data.X[:, 2], rank=data.X[:, 3], rfreq=data.X[:, 4])
-
 
 
 def fetch_ESSLI_2c():

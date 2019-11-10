@@ -4,15 +4,15 @@
  Functions for fetching analogy datasets
 """
 
-from collections import defaultdict
 import glob
 import os
-import numpy as np
+from collections import defaultdict
 
+import numpy as np
+from sklearn.datasets.base import Bunch
 from sklearn.utils import check_random_state
 
-from sklearn.datasets.base import Bunch
-from .utils import _get_dataset_dir, _fetch_file, _change_list_to_np
+from .utils import _fetch_file, _change_list_to_np
 from ..utils import standardize_string
 
 
@@ -59,7 +59,7 @@ def fetch_wordrep(subsample=None, rng=None):
 
     for file_name in files:
         c = os.path.basename(file_name).split(".")[0]
-        c = c[c.index("-")+1:]
+        c = c[c.index("-") + 1:]
         with open(file_name, "r") as f:
             for l in f.read().splitlines():
                 word_pairs.append(standardize_string(l).split())
@@ -75,31 +75,31 @@ def fetch_wordrep(subsample=None, rng=None):
         category_high_level = [category_high_level[i] for i in ids]
 
     wordnet_categories = {'Antonym',
-     'Attribute',
-     'Causes',
-     'DerivedFrom',
-     'Entails',
-     'HasContext',
-     'InstanceOf',
-     'IsA',
-     'MadeOf',
-     'MemberOf',
-     'PartOf',
-     'RelatedTo',
-     'SimilarTo'}
+                          'Attribute',
+                          'Causes',
+                          'DerivedFrom',
+                          'Entails',
+                          'HasContext',
+                          'InstanceOf',
+                          'IsA',
+                          'MadeOf',
+                          'MemberOf',
+                          'PartOf',
+                          'RelatedTo',
+                          'SimilarTo'}
 
     wikipedia_categories = {'adjective-to-adverb',
-     'all-capital-cities',
-     'city-in-state',
-     'comparative',
-     'currency',
-     'man-woman',
-     'nationality-adjective',
-     'past-tense',
-     'plural-nouns',
-     'plural-verbs',
-     'present-participle',
-     'superlative'}
+                            'all-capital-cities',
+                            'city-in-state',
+                            'comparative',
+                            'currency',
+                            'man-woman',
+                            'nationality-adjective',
+                            'past-tense',
+                            'plural-nouns',
+                            'plural-verbs',
+                            'present-participle',
+                            'superlative'}
 
     return Bunch(category_high_level=np.array(category_high_level),
                  X=np.array(word_pairs),
@@ -143,31 +143,29 @@ def fetch_google_analogy():
     cat = None
     for l in L:
         if l.startswith(":"):
-            cat =l.lower().split()[1]
+            cat = l.lower().split()[1]
         else:
-            words =  standardize_string(l).split()
+            words = standardize_string(l).split()
             questions.append(words[0:3])
             answers.append(words[3])
             category.append(cat)
 
     assert set(category) == set(['gram3-comparative', 'gram8-plural', 'capital-common-countries',
-                                         'city-in-state', 'family', 'gram9-plural-verbs', 'gram2-opposite',
-                                         'currency', 'gram4-superlative', 'gram6-nationality-adjective',
-                                         'gram7-past-tense',
-                                         'gram5-present-participle', 'capital-world', 'gram1-adjective-to-adverb'])
-
+                                 'city-in-state', 'family', 'gram9-plural-verbs', 'gram2-opposite',
+                                 'currency', 'gram4-superlative', 'gram6-nationality-adjective',
+                                 'gram7-past-tense',
+                                 'gram5-present-participle', 'capital-world', 'gram1-adjective-to-adverb'])
 
     syntactic = set([c for c in set(category) if c.startswith("gram")])
     category_high_level = []
     for cat in category:
-         category_high_level.append("syntactic" if cat in syntactic else "semantic")
+        category_high_level.append("syntactic" if cat in syntactic else "semantic")
 
     # dtype=object for memory efficiency
     return Bunch(X=np.vstack(questions).astype("object"),
                  y=np.hstack(answers).astype("object"),
                  category=np.hstack(category).astype("object"),
                  category_high_level=np.hstack(category_high_level).astype("object"))
-
 
 
 def fetch_msr_analogy():
@@ -214,16 +212,17 @@ def fetch_msr_analogy():
     noun = set([c for c in set(category) if c.startswith("NN")])
     category_high_level = []
     for cat in category:
-         if cat in verb:
-             category_high_level.append("verb")
-         elif cat in noun:
-             category_high_level.append("noun")
-         else:
-             category_high_level.append("adjective")
+        if cat in verb:
+            category_high_level.append("verb")
+        elif cat in noun:
+            category_high_level.append("noun")
+        else:
+            category_high_level.append("adjective")
 
     assert set([c.upper() for c in category]) == set(['VBD_VBZ', 'VB_VBD', 'VBZ_VBD',
-                                         'VBZ_VB', 'NNPOS_NN', 'JJR_JJS', 'JJS_JJR', 'NNS_NN', 'JJR_JJ',
-                                         'NN_NNS', 'VB_VBZ', 'VBD_VB', 'JJS_JJ', 'NN_NNPOS', 'JJ_JJS', 'JJ_JJR'])
+                                                      'VBZ_VB', 'NNPOS_NN', 'JJR_JJS', 'JJS_JJR', 'NNS_NN', 'JJR_JJ',
+                                                      'NN_NNS', 'VB_VBZ', 'VBD_VB', 'JJS_JJ', 'NN_NNPOS', 'JJ_JJS',
+                                                      'JJ_JJR'])
 
     return Bunch(X=np.vstack(questions).astype("object"),
                  y=np.hstack(answers).astype("object"),
@@ -342,5 +341,3 @@ def fetch_semeval_2012_2(which="all", which_scoring="golden"):
                  y=scores[which_scoring],
                  categories_names=categories_names,
                  categories_descriptions=categories_descriptions)
-
-

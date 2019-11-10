@@ -6,16 +6,13 @@
 NOTE: This file was adapted from the polyglot package
 """
 
-from io import open, StringIO
 from collections import Counter, OrderedDict
-import os
-from concurrent.futures import ProcessPoolExecutor
 
 import six
-from six.moves import zip
 from six import iteritems
-from six import text_type as unicode
 from six import string_types
+from six import text_type as unicode
+
 from .utils import _open
 
 
@@ -226,5 +223,3 @@ class CountedVocabulary(OrderedVocabulary):
         word_count = [x.strip().split() for x in _open(filename, 'r').read().splitlines()]
         word_count = OrderedDict([(w, int(c)) for w, c in word_count])
         return CountedVocabulary(word_count=word_count)
-
-

@@ -3,16 +3,27 @@
  Evaluation functions
 """
 import logging
+from collections import defaultdict, OrderedDict
+from itertools import product
+
 import numpy as np
+import pandas as pd
+import scipy
+from six import iteritems
 from sklearn.cluster import AgglomerativeClustering, KMeans
-from .datasets.similarity import fetch_MEN, fetch_WS353, fetch_SimLex999, fetch_MTurk, fetch_RG65, fetch_RW, fetch_TR9856
+
+from .analogy import SimpleAnalogySolver
+from .datasets.analogy import fetch_msr_analogy, fetch_google_analogy
+from .datasets.analogy import fetch_semeval_2012_2
+from .datasets.analogy import fetch_wordrep
 from .datasets.categorization import fetch_AP, fetch_battig, fetch_BLESS, fetch_ESSLI_1a, fetch_ESSLI_2b, \
     fetch_ESSLI_2c
-from web.analogy import *
-from six import iteritems
-from web.embedding import Embedding
+from .datasets.similarity import fetch_MEN, fetch_WS353, fetch_SimLex999, fetch_MTurk, fetch_RG65, fetch_RW, \
+    fetch_TR9856
+from .embedding import Embedding
 
 logger = logging.getLogger(__name__)
+
 
 def calculate_purity(y_true, y_pred):
     """
@@ -112,7 +123,6 @@ def evaluate_categorization(w, X, y, method="all", seed=None):
         best_purity = max(purity, best_purity)
 
     return best_purity
-
 
 
 def evaluate_on_semeval_2012_2(w):
@@ -331,11 +341,10 @@ def evaluate_similarity(w, X, y):
     if missing_words > 0:
         logger.warning("Missing {} words. Will replace them with mean vector".format(missing_words))
 
-
     mean_vector = np.mean(w.vectors, axis=0, keepdims=True)
     A = np.vstack(w.get(word, mean_vector) for word in X[:, 0])
     B = np.vstack(w.get(word, mean_vector) for word in X[:, 1])
-    scores = np.array([v1.dot(v2.T)/(np.linalg.norm(v1)*np.linalg.norm(v2)) for v1, v2 in zip(A, B)])
+    scores = np.array([v1.dot(v2.T) / (np.linalg.norm(v1) * np.linalg.norm(v2)) for v1, v2 in zip(A, B)])
     return scipy.stats.spearmanr(scores, y).correlation
 
 

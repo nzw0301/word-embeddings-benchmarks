@@ -1,9 +1,8 @@
 """
 Compatibility layer for Python 3/Python 2 single codebase
 """
-import sys
 import hashlib
-
+import sys
 
 if sys.version_info[0] == 3:
     import pickle
@@ -16,6 +15,7 @@ if sys.version_info[0] == 3:
     BytesIO = io.BytesIO
     _urllib = urllib
     izip = zip
+
 
     def md5_hash(string):
         m = hashlib.md5()
@@ -35,6 +35,7 @@ else:
     StringIO = BytesIO = StringIO.StringIO
     izip = itertools.izip
 
+
     class _module_lookup(object):
         modules = [urlparse, urllib2, urllib]
 
@@ -47,12 +48,15 @@ else:
             raise NotImplementedError(
                 'This function has not been imported properly')
 
+
     module_lookup = _module_lookup()
+
 
     class _urllib():
         request = module_lookup
         error = module_lookup
         parse = module_lookup
+
 
     def md5_hash(string):
         m = hashlib.md5()

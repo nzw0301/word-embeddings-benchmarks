@@ -5,10 +5,10 @@
 
 import bz2
 import gzip
-from os import path
-import tarfile
 import io
 from itertools import islice, chain
+from os import path
+
 from six import string_types, text_type
 
 

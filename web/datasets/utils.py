@@ -4,27 +4,28 @@ Downloading datasets: utility functions
 This is a copy of nilearn.datasets.
 """
 
-import errno
-import os
-import numpy as np
 import base64
 import collections
 import contextlib
+import errno
 import fnmatch
+import glob
 import hashlib
+import os
 import shutil
-import tempfile
-import time
 import sys
 import tarfile
+import tempfile
+import time
 import warnings
 import zipfile
-import glob
-import pandas as pd
-from tqdm import tqdm
-from sklearn.datasets.base import Bunch
-from .._utils.compat import _basestring, cPickle, _urllib, md5_hash
 
+import numpy as np
+import pandas as pd
+from sklearn.datasets.base import Bunch
+from tqdm import tqdm
+
+from .._utils.compat import _basestring, cPickle, _urllib, md5_hash
 
 TEMP = tempfile.gettempdir()
 
@@ -39,14 +40,13 @@ def _makedirs(path):  # https://stackoverflow.com/a/600612/223267
             raise
 
 
-
 def _get_cluster_assignments(dataset_name, url, sep=" ", skip_header=False):
     data_dir = _get_dataset_dir("categorization", verbose=0)
     _fetch_file(url=url,
-                 data_dir=data_dir,
-                 uncompress=True,
-                 move="{0}/{0}.txt".format(dataset_name),
-                 verbose=0)
+                data_dir=data_dir,
+                uncompress=True,
+                move="{0}/{0}.txt".format(dataset_name),
+                verbose=0)
     files = glob.glob(os.path.join(data_dir, dataset_name + "/*.txt"))
     X = []
     y = []
@@ -59,11 +59,14 @@ def _get_cluster_assignments(dataset_name, url, sep=" ", skip_header=False):
             y += [os.path.basename(file_name).split(".")[0]] * len(lines)
     return Bunch(X=np.array(X, dtype="object"), y=np.array(y).astype("object"))
 
+
 def _get_as_pd(url, dataset_name, **read_csv_kwargs):
     return pd.read_csv(_fetch_file(url, dataset_name, verbose=0), **read_csv_kwargs)
 
+
 def _change_list_to_np(dict):
     return {k: np.array(dict[k], dtype="object") for k in dict}
+
 
 def _format_time(t):
     if t > 60:
@@ -108,7 +111,6 @@ def readlinkabs(link):
     if os.path.isabs(path):
         return path
     return os.path.join(os.path.dirname(link), path)
-
 
 
 def _chunk_report_(bytes_so_far, total_size, initial_size, t0):
@@ -187,7 +189,6 @@ def _chunk_read_(response, local_file, chunk_size=8192, report_hook=None,
 
     """
 
-
     try:
         if total_size is None:
             total_size = response.info().get('Content-Length').strip()
@@ -216,7 +217,7 @@ def _chunk_read_(response, local_file, chunk_size=8192, report_hook=None,
 
         local_file.write(chunk)
         if report_hook:
-            pbar.update(len(chunk)) # This is better because works in ipython
+            pbar.update(len(chunk))  # This is better because works in ipython
             # _chunk_report_(bytes_so_far, total_size, initial_size, t0)
 
     if report_hook:
@@ -264,7 +265,6 @@ def _get_dataset_dir(sub_dir=None, data_dir=None, default_paths=None,
     # The boolean indicates if it is a pre_dir: in that case, we won't add the
     # dataset name to the path.
     paths = []
-
 
     # Search given environment variables
     if default_paths is not None:
@@ -374,7 +374,7 @@ def _uncompress_file(file_, delete_archive=True, verbose=1):
             processed = True
         if not processed:
             raise IOError(
-                    "[Uncompress] unknown archive file format: %s" % file_)
+                "[Uncompress] unknown archive file format: %s" % file_)
         if delete_archive:
             os.remove(file_)
         if verbose > 0:
@@ -410,8 +410,8 @@ def _filter_column(array, col, criteria):
         raise KeyError('Filtering criterion %s does not exist' % col)
 
     if (not isinstance(criteria, _basestring) and
-        not isinstance(criteria, bytes) and
-        not isinstance(criteria, tuple) and
+            not isinstance(criteria, bytes) and
+            not isinstance(criteria, tuple) and
             isinstance(criteria, collections.Iterable)):
 
         filter = np.zeros(array.shape[0], dtype=np.bool)
@@ -463,16 +463,13 @@ def _filter_columns(array, filters, combination='and'):
     return mask
 
 
-
-
-
 def _get_dataset_descr(ds_name):
     module_path = os.path.dirname(os.path.abspath(__file__))
 
     fname = ds_name
 
     try:
-        with open(os.path.join(module_path, 'description', fname + '.rst'))\
+        with open(os.path.join(module_path, 'description', fname + '.rst')) \
                 as rst_file:
             descr = rst_file.read()
     except IOError:
@@ -514,7 +511,7 @@ def movetree(src, dst):
 
 # TODO: refactor, this function is a mess, it was adapted from other project
 # and it might have not been an optimal choice
-def _fetch_file(url, data_dir=TEMP, uncompress=False, move=False,md5sum=None,
+def _fetch_file(url, data_dir=TEMP, uncompress=False, move=False, md5sum=None,
                 username=None, password=None, mock=False, handlers=[], resume=True, verbose=0):
     """Load requested dataset, downloading it if needed or requested.
 
@@ -572,8 +569,8 @@ def _fetch_file(url, data_dir=TEMP, uncompress=False, move=False,md5sum=None,
 
     # TODO: move to global scope and rename
     def _fetch_helper(url, data_dir=TEMP, resume=True, overwrite=False,
-                md5sum=None, username=None, password=None, handlers=[],
-                verbose=1):
+                      md5sum=None, username=None, password=None, handlers=[],
+                      verbose=1):
         if not os.path.isabs(data_dir):
             data_dir = _get_dataset_dir(data_dir)
 
@@ -683,7 +680,6 @@ def _fetch_file(url, data_dir=TEMP, uncompress=False, move=False,md5sum=None,
     if not os.path.isabs(data_dir):
         data_dir = _get_dataset_dir(data_dir)
 
-
     # There are two working directories here:
     # - data_dir is the destination directory of the dataset
     # - temp_dir is a temporary directory dedicated to this fetching call. All
@@ -718,8 +714,9 @@ def _fetch_file(url, data_dir=TEMP, uncompress=False, move=False,md5sum=None,
         move = os.path.join(dirname, os.path.basename(file_name))
 
     if (abort is None
-        and not os.path.exists(target_file)
-        and (not move or (move and uncompress and not os.path.exists(os.path.dirname(os.path.join(data_dir, move)))))
+            and not os.path.exists(target_file)
+            and (not move or (
+                    move and uncompress and not os.path.exists(os.path.dirname(os.path.join(data_dir, move)))))
             or (move and not uncompress and not os.path.exists(os.path.join(data_dir, move)))):
 
         # Target file in temp dir
@@ -735,13 +732,13 @@ def _fetch_file(url, data_dir=TEMP, uncompress=False, move=False,md5sum=None,
             os.mkdir(temp_dir)
 
         dl_file = _fetch_helper(url, temp_dir, resume=resume,
-                              verbose=verbose, md5sum=md5sum,
-                              username=username,
-                              password=password,
-                              handlers=handlers)
+                                verbose=verbose, md5sum=md5sum,
+                                username=username,
+                                password=password,
+                                handlers=handlers)
 
         if (abort is None and not os.path.exists(target_file) and not
-                os.path.exists(temp_target_file)):
+        os.path.exists(temp_target_file)):
             if not mock:
                 warnings.warn('An error occured while fetching %s' % file_)
                 abort = ("Dataset has been downloaded but requested file was "
@@ -789,6 +786,7 @@ def _fetch_file(url, data_dir=TEMP, uncompress=False, move=False,md5sum=None,
         movetree(temp_dir, data_dir)
         shutil.rmtree(temp_dir)
     return target_file
+
 
 def _tree(path, pattern=None, dictionary=False):
     """ Return a directory tree under the form of a dictionaries and list
