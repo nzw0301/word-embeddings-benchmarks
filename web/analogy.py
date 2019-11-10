@@ -90,6 +90,7 @@ class SimpleAnalogySolver(sklearn.base.BaseEstimator):
             logger.warning("Missing {} words. Will replace them with mean vector".format(missing_words))
 
         # Batch due to memory constraints (in dot operation)
+        normalized_vectors = w.normalize_words().vectors
         for id_batch, start_batch_index in enumerate(range(0, len(X), self.batch_size)):
             end_batch_index = min(start_batch_index + self.batch_size, len(X))
             ids = list(range(start_batch_index, end_batch_index))
@@ -108,7 +109,7 @@ class SimpleAnalogySolver(sklearn.base.BaseEstimator):
                 C = (C.T / np.linalg.norm(C, ord=2, axis=1)).T
                 X = (B - A + C)
                 X = (X.T / np.linalg.norm(X, ord=2, axis=1))
-                D = np.dot(w.normalize_words(), X)
+                D = np.dot(normalized_vectors, X)
             elif self.method == "mul":
                 D_A = np.log((1.0 + np.dot(w.vectors, A.T)) / 2.0 + 1e-5)
                 D_B = np.log((1.0 + np.dot(w.vectors, B.T)) / 2.0 + 1e-5)
