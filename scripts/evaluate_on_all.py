@@ -15,14 +15,13 @@
  * script is not reporting results per category (for instance semantic/syntactic) in analogy benchmarks.
  It is easy to change it by passing category parameter to evaluate_analogy function (see help).
 """
-from optparse import OptionParser
 import logging
 import os
-from web.embeddings import fetch_GloVe, load_embedding
+from optparse import OptionParser
+
 from web.datasets.utils import _get_dataset_dir
-
+from web.embeddings import fetch_GloVe, load_embedding
 from web.evaluate import evaluate_on_all
-
 
 # Configure logging
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG, datefmt='%I:%M:%S')

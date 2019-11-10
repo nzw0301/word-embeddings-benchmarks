@@ -8,14 +8,14 @@
 
  ./evaluate_embeddings <output_dir>
 """
-from web.evaluate import evaluate_on_all
-from web import embeddings
-from six import iteritems
-from multiprocessing import Pool
-from os import path
 import logging
 import optparse
-import multiprocessing
+from multiprocessing import Pool
+from os import path
+
+from six import iteritems
+from web import embeddings
+from web.evaluate import evaluate_on_all
 
 parser = optparse.OptionParser()
 parser.add_option("-j", "--n_jobs", type="int", default=4)
@@ -35,7 +35,6 @@ for dim in [50, 100, 200, 300]:
 
 for dim in [25, 50, 100, 200]:
     jobs.append(["fetch_GloVe", {"dim": dim, "corpus": "twitter-27B"}])
-
 
 for corpus in ["common-crawl-42B", "common-crawl-840B"]:
     jobs.append(["fetch_GloVe", {"dim": 300, "corpus": corpus}])

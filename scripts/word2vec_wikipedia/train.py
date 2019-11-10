@@ -10,6 +10,7 @@
 import logging
 import os.path
 import sys
+
 from gensim.models import Word2Vec
 from gensim.models.word2vec import LineSentence
 
@@ -23,7 +24,8 @@ if __name__ == '__main__':
 
     # check and process input arguments
     if len(sys.argv) < 3:
-        print globals()['__doc__'] % locals()
+        print
+        globals()['__doc__'] % locals()
         sys.exit(1)
     inp, outp1 = sys.argv[1:4]
 

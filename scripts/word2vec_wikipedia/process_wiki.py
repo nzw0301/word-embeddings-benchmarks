@@ -12,8 +12,7 @@
 import logging
 import os.path
 import sys
-import tqdm
- 
+
 from gensim.corpora import WikiCorpus
  
 if __name__ == '__main__':
@@ -37,7 +36,7 @@ if __name__ == '__main__':
     for text in wiki.get_texts():
         output.write(space.join(text) + "\n")
         i = i + 1
-        if (i % 10000 == 0):
+        if i % 10000 == 0:
             logger.info("Saved " + str(i) + " articles")
  
     output.close()
