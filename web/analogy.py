@@ -93,7 +93,7 @@ class SimpleAnalogySolver(sklearn.base.BaseEstimator):
         normalized_vectors = w.normalize_words().vectors
         for id_batch, start_batch_index in enumerate(range(0, len(X), self.batch_size)):
             end_batch_index = min(start_batch_index + self.batch_size, len(X))
-            ids = list(range(start_batch_index, end_batch_index))
+            ids = np.arange(start_batch_index, end_batch_index)
             X_b = X[ids]
             if id_batch % np.floor(len(X) / (10. * self.batch_size)) == 0:
                 logger.info("Processing {}/{} batch".format(int(np.ceil(ids[1] / float(self.batch_size))),
