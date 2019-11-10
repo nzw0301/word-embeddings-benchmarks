@@ -104,9 +104,9 @@ class SimpleAnalogySolver(sklearn.base.BaseEstimator):
             C = np.vstack([w.get(word, mean_vector) for word in X_b[:, 2]])
 
             if self.method == "add":
-                X = (B - A + C)
-                X = (X.T / np.linalg.norm(X, ord=2, axis=1))
-                D = np.dot(w.vectors, X)
+                analogy_matrix = (B - A + C)
+                analogy_matrix = (analogy_matrix.T / np.linalg.norm(analogy_matrix, ord=2, axis=1))
+                D = np.dot(w.vectors, analogy_matrix)
             elif self.method == "mul":
                 D_A = np.log((1.0 + np.dot(w.vectors, A.T)) / 2.0 + 1e-5)
                 D_B = np.log((1.0 + np.dot(w.vectors, B.T)) / 2.0 + 1e-5)
